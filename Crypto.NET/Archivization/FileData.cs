@@ -34,8 +34,10 @@ namespace Crypto.NET.Archivization
         }
 
         public byte[] Content { get; set; }
-        public int ContentLength { get; private set; }
+        public int ContentLength { get; set; }
         
+        public bool IsCompressed { get; set; }
+
         public bool IsEncrypted { get; set; }
 
         public byte[] IV { get; private set; }
@@ -52,6 +54,7 @@ namespace Crypto.NET.Archivization
             // Wczytanie zawartości pliku
             fileData.Content = File.ReadAllBytes(filepath);
             fileData.IsEncrypted = false;
+            fileData.IsCompressed = false;
 
             fileData.ContentLength = fileData.Content.Length;
 
@@ -74,6 +77,7 @@ namespace Crypto.NET.Archivization
             fileData.ContentLength = content_l;
             fileData.Content = content;
             fileData.IsEncrypted = true;
+
             fileData.IV = iv;
 
             return fileData;

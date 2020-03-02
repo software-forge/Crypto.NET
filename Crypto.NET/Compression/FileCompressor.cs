@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Crypto.NET.Archivization;
+﻿using Crypto.NET.Archivization;
 
 namespace Crypto.NET.Compression
 {
-    public class FileCompressor
+    public static class FileCompressor
     {
-
         public static void CompressFile(FileData file)
         {
-
+            file.Content = Compressor.CompressBytes(file.Content);
         }
 
         public static void DecompressFile(FileData file)
         {
-
+            file.Content = Compressor.DecompressBytes(file.Content, file.ContentLength);
         }
     }
 }

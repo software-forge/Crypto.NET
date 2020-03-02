@@ -79,28 +79,28 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="ProvidePasswordForm.cs">
+    <Compile Include="PasswordInputForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ProvidePasswordForm.Designer.cs">
-      <DependentUpon>ProvidePasswordForm.cs</DependentUpon>
+    <Compile Include="PasswordInputForm.Designer.cs">
+      <DependentUpon>PasswordInputForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="SetPasswordForm.cs">
+    <Compile Include="NewArchiveForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SetPasswordForm.Designer.cs">
-      <DependentUpon>SetPasswordForm.cs</DependentUpon>
+    <Compile Include="NewArchiveForm.Designer.cs">
+      <DependentUpon>NewArchiveForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ProvidePasswordForm.resx">
-      <DependentUpon>ProvidePasswordForm.cs</DependentUpon>
+    <EmbeddedResource Include="PasswordInputForm.resx">
+      <DependentUpon>PasswordInputForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SetPasswordForm.resx">
-      <DependentUpon>SetPasswordForm.cs</DependentUpon>
+    <EmbeddedResource Include="NewArchiveForm.resx">
+      <DependentUpon>NewArchiveForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

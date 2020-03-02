@@ -18,8 +18,8 @@ namespace Crypto.NET
 
         FolderBrowserDialog ExtractFolderDialog;
 
-        SetPasswordForm setPasswordForm;
-        ProvidePasswordForm providePasswordForm;
+        NewArchiveForm NewArchiveForm;
+        PasswordInputForm PasswordInputForm;
 
         public MainForm()
         {
@@ -37,11 +37,22 @@ namespace Crypto.NET
 
             ExtractFolderDialog = new FolderBrowserDialog();
 
-            setPasswordForm = new SetPasswordForm();
-            providePasswordForm = new ProvidePasswordForm();
+            NewArchiveForm = new NewArchiveForm();
+            PasswordInputForm = new PasswordInputForm();
         }
 
-        private void MainForm_Load(object sender, EventArgs e) { }
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            UpdateButtonState();
+        }
+
+        private void MainFormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (WorkingArchive != null)
+            {
+                WorkingArchive.Close();
+            }
+        }
 
         private void ArchiveFileButtonClick(object sender, EventArgs e)
         {
@@ -98,45 +109,103 @@ namespace Crypto.NET
             }
         }
 
+        // OK
+        private void UpdateButtonState()
+        {
+            if(WorkingArchive != null && WorkingArchive.IsOpen)
+            {
+                ExtractAllToolStripMenuItem.Enabled = true;
+                DeleteAllToolStripMenuItem.Enabled = true;
+                CloseArchiveToolStripMenuItem.Enabled = true;
+
+                ArchiveFileButton.Enabled = true;
+
+                if (fileNameBox.SelectedItems.Count > 0)
+                {
+                    ExtractFileButton.Enabled = true;
+                    DeleteFileButton.Enabled = true;
+                }
+                else
+                {
+                    ExtractFileButton.Enabled = false;
+                    DeleteFileButton.Enabled = false;
+                }
+            }
+            else
+            {
+                ExtractAllToolStripMenuItem.Enabled = false;
+                DeleteAllToolStripMenuItem.Enabled = false;
+                CloseArchiveToolStripMenuItem.Enabled = false;
+                ArchiveFileButton.Enabled = false;
+                ExtractFileButton.Enabled = false;
+                DeleteFileButton.Enabled = false;
+            }
+        }
+
         // TODO - przerobić po dodaniu opcji kompresji
         private void NewArchiveToolstripMenuItemClick(object sender, EventArgs e)
         {
-            if(CreateArchiveDialog.ShowDialog() == DialogResult.OK)
-            {
-                string filepath = CreateArchiveDialog.FileName;
+            if (CreateArchiveDialog.ShowDialog() == DialogResult.Cancel)
+                return;
 
-                setPasswordForm.ShowDialog();
+            if (NewArchiveForm.ShowDialog() == DialogResult.Cancel)
+                return;
 
-                string password = setPasswordForm.Password;
+            string filename = CreateArchiveDialog.FileName;
+            string password = NewArchiveForm.Password;
+            bool compression = NewArchiveForm.Compression;
+            //bool compression = false;
 
-                WorkingArchive = FileArchive.Create(filepath, password, false);
+            // Jeżeli bieżące archiwum istnieje i jest otwarte, zamknięcie go
+            if (WorkingArchive != null)
+                WorkingArchive.Close();
 
-                UpdateListBox();
-            }
+            // Utworzenie nowego archiwum
+            WorkingArchive = FileArchive.Create(filename, password, compression);
+
+            UpdateListBox();
+            UpdateButtonState();
         }
 
         // OK
         private void OpenArchiveToolstripMenuItemClick(object sender, EventArgs e)
         {
-            if(OpenArchiveDialog.ShowDialog() == DialogResult.OK)
+            if (OpenArchiveDialog.ShowDialog() == DialogResult.Cancel)
+                return;
+
+            if (PasswordInputForm.ShowDialog() == DialogResult.Cancel)
+                return;
+
+            string filename = OpenArchiveDialog.FileName;
+            string password = PasswordInputForm.Password;
+
+            // Jeżeli bieżące archiwum istnieje i jest otwarte, przechowanie głębokiej kopii i bezpieczne zamknięcie go
+            FileArchive backup = null;
+            if (WorkingArchive != null)
             {
-                string filepath = OpenArchiveDialog.FileName;
-
-                providePasswordForm.ShowDialog();
-
-                string password = providePasswordForm.Password;
-
-                try
-                {
-                    WorkingArchive = FileArchive.Open(filepath, password);
-                }
-                catch (KeyDerivationException)
-                {
-                    MessageBox.Show("Otwarcie archiwum przy użyciu podanego hasła nie powiodło się", "Błąd", MessageBoxButtons.OK);
-                }
-
-                UpdateListBox();
+                backup = (FileArchive) WorkingArchive.Clone();
+                WorkingArchive.Close();
             }
+
+            try
+            {
+                // Próba otwarcia archiwum z użyciem podanego hasła
+                WorkingArchive = FileArchive.Open(filename, password);
+            }
+            catch (KeyDerivationException)
+            {
+                // Próba otwarcia archiwum z użyciem podanego hasła nie powiodła się
+
+                // Komunikat
+                MessageBox.Show("Otwarcie archiwum przy użyciu podanego hasła nie powiodło się", "Błąd", MessageBoxButtons.OK);
+
+                //Przywrócenie z zachowanej kopii dotychczas otwartego archiwum (jeżeli takie było)
+                if (backup != null)
+                    WorkingArchive = backup;
+            }
+
+            UpdateListBox();
+            UpdateButtonState();
         }
 
         // OK
@@ -167,6 +236,7 @@ namespace Crypto.NET
             {
                 WorkingArchive.Close();
                 UpdateListBox();
+                UpdateButtonState();
             }
         }
 
@@ -184,6 +254,11 @@ namespace Crypto.NET
             Application.Exit();
         }
 
-        
+        private void FileNameBoxSelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateButtonState();
+        }
+
+       
     }
 }

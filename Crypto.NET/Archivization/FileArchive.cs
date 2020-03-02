@@ -11,7 +11,7 @@ using System.Collections;
 
 namespace Crypto.NET.Archivization
 {
-    public class FileArchive
+    public class FileArchive : ICloneable
     {
         public string FilePath { get; private set; }
 
@@ -244,6 +244,24 @@ namespace Crypto.NET.Archivization
             return archive;
         }
 
+        // Tworzy głęboką kopię wystąpienia (niezbędne dla przechowania backupu)
+        public object Clone()
+        {
+            FileArchive copy = new FileArchive();
+            copy.FilePath = FilePath;
+            copy.ArchiveKey = (EncryptionKey)ArchiveKey.Clone();
+            copy.IsCompressed = IsCompressed;
+
+            Hashtable idFileNamePairs = new Hashtable();
+            foreach (int id in IdFileNamePairs.Keys)
+                idFileNamePairs.Add(id, IdFileNamePairs[id]);
+            copy.IdFileNamePairs = idFileNamePairs;
+
+            copy.Connection = (SQLiteConnection)Connection.Clone();
+
+            return copy;
+        }
+
         /*
             Metody publiczne 
         */
@@ -352,11 +370,8 @@ namespace Crypto.NET.Archivization
             {
                 FileEncryptor.DecryptFile(file, ArchiveKey);
 
-                /*
-                    TODO - Co jeśli plik już istnieje w podanej lokalizacji?
-                    
-                    zatrzymaj lub zastąp??
-                */
+                if (IsCompressed)
+                    FileCompressor.DecompressFile(file);
 
                 File.WriteAllBytes(Path.Combine(destPath, file.NameStr), file.Content);
             }

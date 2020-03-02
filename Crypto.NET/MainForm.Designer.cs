@@ -30,18 +30,18 @@
         {
             this.ExtractFileButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.archiveFileButton = new System.Windows.Forms.Button();
+            this.ArchiveFileButton = new System.Windows.Forms.Button();
             this.DeleteFileButton = new System.Windows.Forms.Button();
             this.fileNameBox = new System.Windows.Forms.ListBox();
             this.MenuStrip = new System.Windows.Forms.MenuStrip();
             this.MenuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NewArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.extractAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExtractAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.DeleteAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CloseArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox2.SuspendLayout();
             this.MenuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -58,7 +58,7 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.archiveFileButton);
+            this.groupBox2.Controls.Add(this.ArchiveFileButton);
             this.groupBox2.Controls.Add(this.DeleteFileButton);
             this.groupBox2.Controls.Add(this.fileNameBox);
             this.groupBox2.Controls.Add(this.ExtractFileButton);
@@ -69,15 +69,15 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Pliki";
             // 
-            // archiveFileButton
+            // ArchiveFileButton
             // 
-            this.archiveFileButton.Location = new System.Drawing.Point(6, 172);
-            this.archiveFileButton.Name = "archiveFileButton";
-            this.archiveFileButton.Size = new System.Drawing.Size(202, 25);
-            this.archiveFileButton.TabIndex = 8;
-            this.archiveFileButton.Text = "Dodaj";
-            this.archiveFileButton.UseVisualStyleBackColor = true;
-            this.archiveFileButton.Click += new System.EventHandler(this.ArchiveFileButtonClick);
+            this.ArchiveFileButton.Location = new System.Drawing.Point(6, 172);
+            this.ArchiveFileButton.Name = "ArchiveFileButton";
+            this.ArchiveFileButton.Size = new System.Drawing.Size(202, 25);
+            this.ArchiveFileButton.TabIndex = 8;
+            this.ArchiveFileButton.Text = "Dodaj";
+            this.ArchiveFileButton.UseVisualStyleBackColor = true;
+            this.ArchiveFileButton.Click += new System.EventHandler(this.ArchiveFileButtonClick);
             // 
             // DeleteFileButton
             // 
@@ -97,6 +97,7 @@
             this.fileNameBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.fileNameBox.Size = new System.Drawing.Size(202, 147);
             this.fileNameBox.TabIndex = 3;
+            this.fileNameBox.SelectedIndexChanged += new System.EventHandler(this.FileNameBoxSelectedIndexChanged);
             // 
             // MenuStrip
             // 
@@ -113,8 +114,8 @@
             this.MenuToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.NewArchiveToolStripMenuItem,
             this.OpenArchiveToolStripMenuItem,
-            this.extractAllToolStripMenuItem,
-            this.deleteAllToolStripMenuItem,
+            this.ExtractAllToolStripMenuItem,
+            this.DeleteAllToolStripMenuItem,
             this.CloseArchiveToolStripMenuItem,
             this.AboutToolStripMenuItem,
             this.quitToolStripMenuItem});
@@ -125,51 +126,51 @@
             // NewArchiveToolStripMenuItem
             // 
             this.NewArchiveToolStripMenuItem.Name = "NewArchiveToolStripMenuItem";
-            this.NewArchiveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.NewArchiveToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.NewArchiveToolStripMenuItem.Text = "Nowe archiwum";
             this.NewArchiveToolStripMenuItem.Click += new System.EventHandler(this.NewArchiveToolstripMenuItemClick);
             // 
             // OpenArchiveToolStripMenuItem
             // 
             this.OpenArchiveToolStripMenuItem.Name = "OpenArchiveToolStripMenuItem";
-            this.OpenArchiveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.OpenArchiveToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.OpenArchiveToolStripMenuItem.Text = "Otwórz";
             this.OpenArchiveToolStripMenuItem.Click += new System.EventHandler(this.OpenArchiveToolstripMenuItemClick);
             // 
-            // extractAllToolStripMenuItem
+            // ExtractAllToolStripMenuItem
             // 
-            this.extractAllToolStripMenuItem.Name = "extractAllToolStripMenuItem";
-            this.extractAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.extractAllToolStripMenuItem.Text = "Wypakuj całość";
-            this.extractAllToolStripMenuItem.Click += new System.EventHandler(this.ExtractAllToolstripMenuItemClick);
+            this.ExtractAllToolStripMenuItem.Name = "ExtractAllToolStripMenuItem";
+            this.ExtractAllToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.ExtractAllToolStripMenuItem.Text = "Wypakuj całość";
+            this.ExtractAllToolStripMenuItem.Click += new System.EventHandler(this.ExtractAllToolstripMenuItemClick);
+            // 
+            // DeleteAllToolStripMenuItem
+            // 
+            this.DeleteAllToolStripMenuItem.Name = "DeleteAllToolStripMenuItem";
+            this.DeleteAllToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.DeleteAllToolStripMenuItem.Text = "Wyczyść archiwum";
+            this.DeleteAllToolStripMenuItem.Click += new System.EventHandler(this.DeleteAllToolstripMenuItemClick);
             // 
             // CloseArchiveToolStripMenuItem
             // 
             this.CloseArchiveToolStripMenuItem.Name = "CloseArchiveToolStripMenuItem";
-            this.CloseArchiveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.CloseArchiveToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.CloseArchiveToolStripMenuItem.Text = "Zamknij";
             this.CloseArchiveToolStripMenuItem.Click += new System.EventHandler(this.CloseArchiveToolstripMenuItemClick);
             // 
             // AboutToolStripMenuItem
             // 
             this.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem";
-            this.AboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.AboutToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.AboutToolStripMenuItem.Text = "O programie";
             this.AboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolstripMenuItemClick);
             // 
             // quitToolStripMenuItem
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.quitToolStripMenuItem.Text = "Zakończ";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.QuitToolstripMenuItemClick);
-            // 
-            // deleteAllToolStripMenuItem
-            // 
-            this.deleteAllToolStripMenuItem.Name = "deleteAllToolStripMenuItem";
-            this.deleteAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.deleteAllToolStripMenuItem.Text = "Wyczyść archiwum";
-            this.deleteAllToolStripMenuItem.Click += new System.EventHandler(this.DeleteAllToolstripMenuItemClick);
             // 
             // MainForm
             // 
@@ -186,6 +187,7 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Crypto.NET";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.groupBox2.ResumeLayout(false);
             this.MenuStrip.ResumeLayout(false);
@@ -207,9 +209,9 @@
         private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem;
         private System.Windows.Forms.Button DeleteFileButton;
         private System.Windows.Forms.ToolStripMenuItem CloseArchiveToolStripMenuItem;
-        private System.Windows.Forms.Button archiveFileButton;
-        private System.Windows.Forms.ToolStripMenuItem extractAllToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem deleteAllToolStripMenuItem;
+        private System.Windows.Forms.Button ArchiveFileButton;
+        private System.Windows.Forms.ToolStripMenuItem ExtractAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem DeleteAllToolStripMenuItem;
     }
 }
 

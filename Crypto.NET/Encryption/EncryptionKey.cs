@@ -1,9 +1,10 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using System;
 
 namespace Crypto.NET.Encryption
 {
-    public class EncryptionKey
+    public class EncryptionKey : ICloneable
     {
         public byte[] PasswordSalt { get; private set; }
         public byte[] KeyCheckValue { get; private set; }
@@ -60,6 +61,20 @@ namespace Crypto.NET.Encryption
             return new EncryptionKey(salt, checkvalue);
         }
 
+        // Tworzy głęboką kopię wystąpienia (niezbędne dla przechowania backupu)
+        public object Clone()
+        {
+            EncryptionKey copy = new EncryptionKey(PasswordSalt, KeyCheckValue);
+
+            if (IsDerived)
+            {
+                copy.IsDerived = true;
+                copy.Value = Value;
+            }
+
+            return copy;
+        }
+
         /*
             Metody publiczne
         */
@@ -95,5 +110,7 @@ namespace Crypto.NET.Encryption
                 IsDerived = false;
             }
         }
+
+        
     }
 }
