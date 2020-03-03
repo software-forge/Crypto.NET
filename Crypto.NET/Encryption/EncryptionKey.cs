@@ -4,7 +4,7 @@ using System;
 
 namespace Crypto.NET.Encryption
 {
-    public class EncryptionKey : ICloneable
+    public class EncryptionKey
     {
         public byte[] PasswordSalt { get; private set; }
         public byte[] KeyCheckValue { get; private set; }
@@ -12,12 +12,12 @@ namespace Crypto.NET.Encryption
         public bool IsDerived { get; private set; }
         public byte[] Value { get; private set; }
 
-        public static int Iterations = 5000;
+        public static int Iterations = 5000; // Liczba iteracji funkcji PBKDF2
 
-        public static int SaltLength = 16;  // Długość soli - 128 bitów
+        public static int SaltLength = 16;  // Długość soli kryptograficznej w bajtach 16B = 128b
 
-        public static int BlockLength = 16; // Długość bloku - 128 bitów
-        public static int KeyLength = 32;   // Długość klucza - 256 bitów
+        public static int BlockLength = 16; // Długość bloku szyfru AES 16B = 128b
+        public static int KeyLength = 32;   // Długość klucza szyfrowania 32B = 256b
 
         // Konstruktor prywatny dla wymuszenia wzorca factory
         private EncryptionKey(byte[] salt, byte[] checkvalue)
@@ -62,7 +62,7 @@ namespace Crypto.NET.Encryption
         }
 
         // Tworzy głęboką kopię wystąpienia (niezbędne dla przechowania backupu)
-        public object Clone()
+        public EncryptionKey Clone()
         {
             EncryptionKey copy = new EncryptionKey(PasswordSalt, KeyCheckValue);
 
@@ -110,7 +110,5 @@ namespace Crypto.NET.Encryption
                 IsDerived = false;
             }
         }
-
-        
     }
 }

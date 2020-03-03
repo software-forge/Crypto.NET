@@ -11,15 +11,7 @@ namespace Crypto.NET.Encryption
         public byte[] ExpectedKeyCheckValue { get; private set; }
         public byte[] CalculatedKeyCheckValue { get; private set; }
 
-        public override string Message
-        {
-            get
-            {
-                return string.Format("Nie udało się wyprowadzić klucza z użyciem podanego hasła");
-            }
-        }
-
-        public KeyDerivationException(byte[] expectedKeyCheckValue, byte[] calculatedKeyCheckValue) : base()
+        public KeyDerivationException(byte[] expectedKeyCheckValue, byte[] calculatedKeyCheckValue) : base("Nie udało się wyprowadzić klucza szyfrowania z użyciem podanego hasła.")
         {
             ExpectedKeyCheckValue = expectedKeyCheckValue;
             CalculatedKeyCheckValue = calculatedKeyCheckValue;

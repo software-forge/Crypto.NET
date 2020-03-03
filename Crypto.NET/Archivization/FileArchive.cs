@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Text;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 
 using Crypto.NET.Encryption;
 using Crypto.NET.Compression;
-using System.Collections;
 
 namespace Crypto.NET.Archivization
 {
-    public class FileArchive : ICloneable
+    public class FileArchive
     {
         public string FilePath { get; private set; }
 
@@ -28,22 +28,6 @@ namespace Crypto.NET.Archivization
         }
 
         public Hashtable IdFileNamePairs { get; set; }
-
-        public int FileId(string name)
-        {
-            int id = -1;
-
-            foreach(int i in IdFileNamePairs.Keys)
-            {
-                if(IdFileNamePairs[i].Equals(name))
-                {
-                    id = i;
-                    break;
-                }
-            }
-            
-            return id;
-        }
 
         private string ConnectionString
         {
@@ -64,8 +48,34 @@ namespace Crypto.NET.Archivization
         }
 
         /*
-            Metody prywatne 
+            Pomocnicze metody prywatne 
         */
+
+        // Zwraca ID pliku o podanej nazwie (-1 jeżeli takiego pliku nie ma)
+        private int FileId(string name)
+        {
+            int id = -1;
+
+            foreach (int i in IdFileNamePairs.Keys)
+            {
+                if (IdFileNamePairs[i].Equals(name))
+                {
+                    id = i;
+                    break;
+                }
+            }
+
+            return id;
+        }
+
+        // Zwraca prawdę, jeżeli przekazana nazwa pliku jest unikalna w archiwum
+        private bool FileNameUnique(string fileName)
+        {
+            foreach (string value in IdFileNamePairs.Values)
+                if (value.Equals(fileName))
+                    return false;
+            return true;
+        }
 
         // Tworzy plik archiwum jako bazę SQLite z odpowiednimi tabelami i rekordem danych klucza i kompresji
         private void CreateArchiveFile()
@@ -245,11 +255,11 @@ namespace Crypto.NET.Archivization
         }
 
         // Tworzy głęboką kopię wystąpienia (niezbędne dla przechowania backupu)
-        public object Clone()
+        public FileArchive Clone()
         {
             FileArchive copy = new FileArchive();
             copy.FilePath = FilePath;
-            copy.ArchiveKey = (EncryptionKey)ArchiveKey.Clone();
+            copy.ArchiveKey = ArchiveKey.Clone();
             copy.IsCompressed = IsCompressed;
 
             Hashtable idFileNamePairs = new Hashtable();
@@ -257,13 +267,13 @@ namespace Crypto.NET.Archivization
                 idFileNamePairs.Add(id, IdFileNamePairs[id]);
             copy.IdFileNamePairs = idFileNamePairs;
 
-            copy.Connection = (SQLiteConnection)Connection.Clone();
+            copy.Connection = (SQLiteConnection) Connection.Clone();
 
             return copy;
         }
 
         /*
-            Metody publiczne 
+            Metody publiczne realizujące operacje na otwartym archiwum
         */
 
         // Zamyka otwarte archiwum 
@@ -278,11 +288,7 @@ namespace Crypto.NET.Archivization
             }
         }
 
-        /*
-            Metody realizujące podstawowe operacje na archiwum 
-        */
-
-        // Archiwizuje wskazany plik
+        // Archiwizuje wskazany po ścieżce plik
         public void ArchiveFile(string path)
         {
             if (!IsOpen)
@@ -296,16 +302,18 @@ namespace Crypto.NET.Archivization
 
             FileData file = FileData.Create(path);
 
+            string plaintextName = file.NameStr;
+
+            if (!FileNameUnique(plaintextName))
+                throw new FileNamingException(plaintextName);
+
             if (IsCompressed)
                 FileCompressor.CompressFile(file);
-
-            string plaintext_name = Encoding.ASCII.GetString(file.Name);
 
             FileEncryptor.EncryptFile(file, ArchiveKey);
 
             SQLiteCommand command = new SQLiteCommand(Connection);
 
-            // INSERT
             command.CommandText = "INSERT INTO FileData(name_l, name, content_l, content, iv) VALUES" +
                 "(" +
                     "'" + Convert.ToString(file.NameLength) + "', " +
@@ -321,15 +329,15 @@ namespace Crypto.NET.Archivization
             command.ExecuteNonQuery();
 
             command.CommandText = "SELECT last_insert_rowid();";
-            long last_row_id = (long) command.ExecuteScalar();
+            long lastRowId = (long) command.ExecuteScalar();
 
-            int file_id = (int) last_row_id;
+            int fileId = (int) lastRowId;
 
             // Przechowanie pary id_pliku-nazwa_pliku
-            IdFileNamePairs.Add(file_id, plaintext_name);
+            IdFileNamePairs.Add(fileId, plaintextName);
         }
 
-        // Wypakowuje z archiwum wskazany po identyfikatorze plik do wskazanego katalogu
+        // Wypakowuje z archiwum wskazany po identyfikatorze plik do wskazanego po ścieżce katalogu
         public void Extract(int id, string destPath)
         {
             if (!IsOpen)
@@ -381,7 +389,7 @@ namespace Crypto.NET.Archivization
             }
         }
 
-        // Wypakowuje z archiwum wskazany z nazwy plik do wskazanego katalogu
+        // Wypakowuje z archiwum wskazany po nazwie plik do wskazanego po ścieżce katalogu
         public void Extract(string name, string destPath)
         {
             int fileId = FileId(name);
@@ -392,7 +400,7 @@ namespace Crypto.NET.Archivization
             Extract(fileId, destPath);
         }
 
-        // Wypakowuje całe archiwum do wskazanego katalogu - MOŻNA LEPIEJ
+        // Wypakowuje wszystkie pliki z archiwum do wskazanego po ścieżce katalogu
         public void ExtractAll(string destPath)
         {
             foreach(int id in IdFileNamePairs.Keys)
@@ -417,7 +425,7 @@ namespace Crypto.NET.Archivization
             IdFileNamePairs.Remove(id);
         }
 
-        // Usuwa z archiwum wskazany z nazwy plik
+        // Usuwa z archiwum wskazany po nazwie plik
         public void Delete(string name)
         {
             int fileId = FileId(name);
@@ -428,7 +436,7 @@ namespace Crypto.NET.Archivization
             Delete(fileId);
         }
 
-        // Usuwa wszystkie zapisane pliki z archiwum
+        // Usuwa wszystkie pliki z archiwum
         public void DeleteAll()
         {
             SQLiteCommand command = new SQLiteCommand(Connection);
@@ -440,7 +448,7 @@ namespace Crypto.NET.Archivization
             IdFileNamePairs.Clear();
         }
 
-        // Zwraca listę nazw plików w archiwum
+        // Zwraca listę nazw plików zapisanych w archiwum
         public List<string> FileList
         {
             get

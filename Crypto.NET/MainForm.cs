@@ -21,6 +21,8 @@ namespace Crypto.NET
         NewArchiveForm NewArchiveForm;
         PasswordInputForm PasswordInputForm;
 
+        AboutForm AboutForm;
+
         public MainForm()
         {
             InitializeComponent();
@@ -39,80 +41,33 @@ namespace Crypto.NET
 
             NewArchiveForm = new NewArchiveForm();
             PasswordInputForm = new PasswordInputForm();
+
+            AboutForm = new AboutForm();
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        private void UpdateGui()
         {
             UpdateButtonState();
+            UpdateListBox();
         }
 
-        private void MainFormClosing(object sender, FormClosingEventArgs e)
+        private void UpdateListBox()
         {
             if (WorkingArchive != null)
             {
-                WorkingArchive.Close();
-            }
-        }
-
-        private void ArchiveFileButtonClick(object sender, EventArgs e)
-        {
-            if(ArchiveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                string filepath = ArchiveFileDialog.FileName;
-
-                WorkingArchive.ArchiveFile(filepath);
-                
-                UpdateListBox();
-            }
-        }
-
-        // OK
-        private void ExtractFileButtonClick(object sender, EventArgs e)
-        { 
-            if(ExtractFolderDialog.ShowDialog() == DialogResult.OK)
-            {
-                foreach(string item in fileNameBox.SelectedItems)
-                {
-                    WorkingArchive.Extract(item, ExtractFolderDialog.SelectedPath);
-                }
-            }
-        }
-
-        // OK
-        private void DeleteFileButtonClick(object sender, EventArgs e)
-        {
-            DialogResult result = MessageBox.Show("Czy na pewno chcesz usunąć wybrane pliki?", "Potwierdź usunięcie", MessageBoxButtons.OKCancel);
-
-            if(result == DialogResult.OK)
-            {
-                foreach(string name in fileNameBox.SelectedItems)
-                {
-                    WorkingArchive.Delete(name);
-                }
-
-                UpdateListBox();
-            }
-        }
-
-        // OK
-        private void UpdateListBox()
-        {
-            if(WorkingArchive != null)
-            {
                 List<string> filenames = WorkingArchive.FileList;
 
-                fileNameBox.BeginUpdate();
-                fileNameBox.Items.Clear();
+                FileNameBox.BeginUpdate();
+                FileNameBox.Items.Clear();
                 foreach (string fname in filenames)
-                    fileNameBox.Items.Add(fname);
-                fileNameBox.EndUpdate();
+                    FileNameBox.Items.Add(fname);
+                FileNameBox.EndUpdate();
             }
         }
 
-        // OK
         private void UpdateButtonState()
         {
-            if(WorkingArchive != null && WorkingArchive.IsOpen)
+            if (WorkingArchive != null && WorkingArchive.IsOpen)
             {
                 ExtractAllToolStripMenuItem.Enabled = true;
                 DeleteAllToolStripMenuItem.Enabled = true;
@@ -120,7 +75,7 @@ namespace Crypto.NET
 
                 ArchiveFileButton.Enabled = true;
 
-                if (fileNameBox.SelectedItems.Count > 0)
+                if (FileNameBox.SelectedItems.Count > 0)
                 {
                     ExtractFileButton.Enabled = true;
                     DeleteFileButton.Enabled = true;
@@ -142,8 +97,65 @@ namespace Crypto.NET
             }
         }
 
-        // TODO - przerobić po dodaniu opcji kompresji
-        private void NewArchiveToolstripMenuItemClick(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            UpdateButtonState();
+        }
+
+        private void MainForm_Closing(object sender, FormClosingEventArgs e)
+        {
+            if (WorkingArchive != null)
+            {
+                WorkingArchive.Close();
+            }
+        }
+
+        private void ArchiveFileButton_Clicked(object sender, EventArgs e)
+        {
+            if(ArchiveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filepath = ArchiveFileDialog.FileName;
+
+                try
+                {
+                    WorkingArchive.ArchiveFile(filepath);
+                }
+                catch(FileNamingException fne)
+                {
+                    MessageBox.Show(string.Format("{0} Nadaj plikowi unikalną nazwę i spróbuj ponownie.", fne.Message), "Wystąpił błąd", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                }
+                
+                UpdateListBox();
+            }
+        }
+
+        private void ExtractFileButton_Clicked(object sender, EventArgs e)
+        { 
+            if(ExtractFolderDialog.ShowDialog() == DialogResult.OK)
+            {
+                foreach(string item in FileNameBox.SelectedItems)
+                {
+                    WorkingArchive.Extract(item, ExtractFolderDialog.SelectedPath);
+                }
+            }
+        }
+
+        private void DeleteFileButton_Clicked(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Czy na pewno chcesz usunąć wybrane pliki?", "Potwierdź usunięcie plików", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+
+            if(result == DialogResult.OK)
+            {
+                foreach(string name in FileNameBox.SelectedItems)
+                {
+                    WorkingArchive.Delete(name);
+                }
+
+                UpdateListBox();
+            }
+        }
+
+        private void NewArchiveToolstripMenuItem_Clicked(object sender, EventArgs e)
         {
             if (CreateArchiveDialog.ShowDialog() == DialogResult.Cancel)
                 return;
@@ -154,7 +166,6 @@ namespace Crypto.NET
             string filename = CreateArchiveDialog.FileName;
             string password = NewArchiveForm.Password;
             bool compression = NewArchiveForm.Compression;
-            //bool compression = false;
 
             // Jeżeli bieżące archiwum istnieje i jest otwarte, zamknięcie go
             if (WorkingArchive != null)
@@ -163,12 +174,10 @@ namespace Crypto.NET
             // Utworzenie nowego archiwum
             WorkingArchive = FileArchive.Create(filename, password, compression);
 
-            UpdateListBox();
-            UpdateButtonState();
+            UpdateGui();
         }
 
-        // OK
-        private void OpenArchiveToolstripMenuItemClick(object sender, EventArgs e)
+        private void OpenArchiveToolstripMenuItem_Clicked(object sender, EventArgs e)
         {
             if (OpenArchiveDialog.ShowDialog() == DialogResult.Cancel)
                 return;
@@ -183,7 +192,7 @@ namespace Crypto.NET
             FileArchive backup = null;
             if (WorkingArchive != null)
             {
-                backup = (FileArchive) WorkingArchive.Clone();
+                backup = WorkingArchive.Clone();
                 WorkingArchive.Close();
             }
 
@@ -192,24 +201,22 @@ namespace Crypto.NET
                 // Próba otwarcia archiwum z użyciem podanego hasła
                 WorkingArchive = FileArchive.Open(filename, password);
             }
-            catch (KeyDerivationException)
+            catch (KeyDerivationException kde)
             {
                 // Próba otwarcia archiwum z użyciem podanego hasła nie powiodła się
 
                 // Komunikat
-                MessageBox.Show("Otwarcie archiwum przy użyciu podanego hasła nie powiodło się", "Błąd", MessageBoxButtons.OK);
+                MessageBox.Show(kde.Message, "Wystąpił błąd", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 
                 //Przywrócenie z zachowanej kopii dotychczas otwartego archiwum (jeżeli takie było)
                 if (backup != null)
                     WorkingArchive = backup;
             }
 
-            UpdateListBox();
-            UpdateButtonState();
+            UpdateGui();
         }
 
-        // OK
-        private void ExtractAllToolstripMenuItemClick(object sender, EventArgs e)
+        private void ExtractAllToolstripMenuItem_Clicked(object sender, EventArgs e)
         { 
             if (ExtractFolderDialog.ShowDialog() == DialogResult.OK)
             {
@@ -217,10 +224,9 @@ namespace Crypto.NET
             }      
         }
 
-        // OK
-        private void DeleteAllToolstripMenuItemClick(object sender, EventArgs e)
+        private void DeleteAllToolstripMenuItem_Clicked(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Czy na pewno chcesz usunąć wszystkie pliki z archiwum?", "Potwierdź usunięcie", MessageBoxButtons.OKCancel);
+            DialogResult result = MessageBox.Show("Czy na pewno chcesz usunąć wszystkie pliki z archiwum?", "Potwierdź usunięcie plików", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
 
             if (result == DialogResult.OK)
             {
@@ -229,22 +235,21 @@ namespace Crypto.NET
             }
         }
 
-        // OK
-        private void CloseArchiveToolstripMenuItemClick(object sender, EventArgs e)
+        private void CloseArchiveToolstripMenuItem_Clicked(object sender, EventArgs e)
         {
             if(WorkingArchive != null)
             {
                 WorkingArchive.Close();
-                UpdateListBox();
-                UpdateButtonState();
+                UpdateGui();
             }
         }
 
-        // TODO
-        private void AboutToolstripMenuItemClick(object sender, EventArgs e) { }
+        private void AboutToolstripMenuItem_Clicked(object sender, EventArgs e)
+        {
+            AboutForm.ShowDialog();
+        }
 
-        // OK
-        private void QuitToolstripMenuItemClick(object sender, EventArgs e)
+        private void QuitToolstripMenuItem_Clicked(object sender, EventArgs e)
         {
             if(WorkingArchive != null)
             {
@@ -254,11 +259,9 @@ namespace Crypto.NET
             Application.Exit();
         }
 
-        private void FileNameBoxSelectedIndexChanged(object sender, EventArgs e)
+        private void FileNameBoxSelectedIndex_Changed(object sender, EventArgs e)
         {
             UpdateButtonState();
         }
-
-       
     }
 }
