@@ -1,6 +1,6 @@
-﻿using Crypto.NET.Archivization;
+﻿using LibCrypto.NET.Archivization;
 
-namespace Crypto.NET.Compression
+namespace LibCrypto.NET.Compression
 {
     public static class FileCompressor
     {

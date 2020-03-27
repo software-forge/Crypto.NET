@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 
-using Crypto.NET.Encryption;
-using Crypto.NET.Compression;
+using LibCrypto.NET.Encryption;
+using LibCrypto.NET.Compression;
 
-namespace Crypto.NET.Archivization
+namespace LibCrypto.NET.Archivization
 {
     public class FileArchive
     {

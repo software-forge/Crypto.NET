@@ -17,7 +17,6 @@ namespace Crypto.NET
         public PasswordInputForm()
         {
             InitializeComponent();
-
             Password = "";
         }
 
@@ -32,13 +31,18 @@ namespace Crypto.NET
 
         private void OkButtonClick(object sender, EventArgs e)
         {
-            Password = passwordBox.Text;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
 
-            if (!Password.Equals(""))
-            {
-                DialogResult = DialogResult.OK;
-                Close();
-            }
+        private void PasswordBoxTextChanged(object sender, EventArgs e)
+        {
+            Password = PasswordBox.Text;
+
+            if (Password.Equals(""))
+                OkButton.Enabled = false;
+            else
+                OkButton.Enabled = true;
         }
     }
 }

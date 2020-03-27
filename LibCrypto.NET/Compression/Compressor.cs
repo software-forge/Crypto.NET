@@ -2,7 +2,7 @@
 using System.IO;
 using System.IO.Compression;
 
-namespace Crypto.NET.Compression
+namespace LibCrypto.NET.Compression
 {
     public static class Compressor
     {

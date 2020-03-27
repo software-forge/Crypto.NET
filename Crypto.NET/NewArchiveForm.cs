@@ -1,20 +1,11 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using System.Windows.Forms;
 
 namespace Crypto.NET
 {
     public partial class NewArchiveForm : Form
     {
-
-
         public string Password { get; private set; }
 
         public bool Compression { get; private set; }
@@ -31,15 +22,8 @@ namespace Crypto.NET
 
         private void OkButtonClick(object sender, EventArgs e)
         {
-            string password = passwordBox.Text;
-            string password_confirm = passwordConfirmBox.Text;
-
-            if(password.Equals(password_confirm))
-            {
-                Password = password;
-                DialogResult = DialogResult.OK;
-                Close();
-            }
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void CancelButtonClick(object sender, EventArgs e)
@@ -52,7 +36,37 @@ namespace Crypto.NET
 
         private void CompressFilesCheckboxCheckedChanged(object sender, EventArgs e)
         {
-            Compression = CompressFilesCheckbox.Checked;
+            Compression = CompressionCheckBox.Checked;
+        }
+
+        private void VerifyInput()
+        {
+            string password = PasswordBox.Text;
+            string passwordConfirm = ConfirmBox.Text;
+
+            if(password.Equals("") || passwordConfirm.Equals(""))
+            {
+                OkButton.Enabled = false;
+            }
+            else if(!password.Equals(passwordConfirm))
+            {
+                OkButton.Enabled = false;
+            }
+            else
+            {
+                Password = password;
+                OkButton.Enabled = true;
+            }
+        }
+
+        private void PasswordBoxTextChanged(object sender, EventArgs e)
+        {
+            VerifyInput();
+        }
+
+        private void PasswordConfirmBoxTextChanged(object sender, EventArgs e)
+        {
+            VerifyInput();
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 
-using Crypto.NET.Archivization;
+using LibCrypto.NET.Archivization;
 
-namespace Crypto.NET.Encryption
+namespace LibCrypto.NET.Encryption
 {
     public class FileEncryptor
     {

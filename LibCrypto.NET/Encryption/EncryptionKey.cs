@@ -2,7 +2,7 @@
 using System.Text;
 using System;
 
-namespace Crypto.NET.Encryption
+namespace LibCrypto.NET.Encryption
 {
     public class EncryptionKey
     {
@@ -99,6 +99,8 @@ namespace Crypto.NET.Encryption
             }
 
             IsDerived = true;
+
+            //Console.WriteLine("Wyprowadzony klucz: " + Encoding.ASCII.GetString(Value));
         }
 
         // Resetuje klucz, jeżeli uprzednio został on wyprowadzony

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Crypto.NET.Encryption
+namespace LibCrypto.NET.Encryption
 {
     public class KeyDerivationException : Exception
     {

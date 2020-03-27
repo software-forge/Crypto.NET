@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-using Crypto.NET.Encryption;
+using LibCrypto.NET.Encryption;
 
 namespace Crypto.NET
 {
@@ -22,6 +22,11 @@ namespace Crypto.NET
         private void OkButtonClick(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void AboutForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

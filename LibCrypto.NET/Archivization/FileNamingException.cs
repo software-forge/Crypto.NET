@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Crypto.NET.Archivization
+namespace LibCrypto.NET.Archivization
 {
     public class FileNamingException : Exception
     {

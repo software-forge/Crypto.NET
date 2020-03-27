@@ -3,9 +3,9 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-using Crypto.NET.Encryption;
+using LibCrypto.NET.Encryption;
 
-namespace Crypto.NET.Archivization
+namespace LibCrypto.NET.Archivization
 {
     public class FileData
     {

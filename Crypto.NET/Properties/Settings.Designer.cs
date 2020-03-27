@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Crypto.NET.Properties
+namespace LibCrypto.NET.Properties
 {
 
 

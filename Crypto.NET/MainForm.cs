@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-using Crypto.NET.Archivization;
-using Crypto.NET.Encryption;
+using LibCrypto.NET.Archivization;
+using LibCrypto.NET.Encryption;
 
 namespace Crypto.NET
 {

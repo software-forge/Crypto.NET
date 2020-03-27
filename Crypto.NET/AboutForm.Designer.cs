@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.OkButton = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.TitleLabel = new System.Windows.Forms.Label();
             this.DescriptionLabel = new System.Windows.Forms.Label();
             this.CopyrightLabel = new System.Windows.Forms.Label();
             this.Pbkdf2Label = new System.Windows.Forms.Label();
@@ -46,15 +46,15 @@
             this.OkButton.UseVisualStyleBackColor = true;
             this.OkButton.Click += new System.EventHandler(this.OkButtonClick);
             // 
-            // label1
+            // TitleLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(226, 24);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Informacje o programie";
+            this.TitleLabel.AutoSize = true;
+            this.TitleLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.TitleLabel.Location = new System.Drawing.Point(13, 13);
+            this.TitleLabel.Name = "TitleLabel";
+            this.TitleLabel.Size = new System.Drawing.Size(226, 24);
+            this.TitleLabel.TabIndex = 1;
+            this.TitleLabel.Text = "Informacje o programie";
             // 
             // DescriptionLabel
             // 
@@ -101,12 +101,13 @@
             this.Controls.Add(this.Pbkdf2Label);
             this.Controls.Add(this.CopyrightLabel);
             this.Controls.Add(this.DescriptionLabel);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.TitleLabel);
             this.Controls.Add(this.OkButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "AboutForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AboutForm";
+            this.Load += new System.EventHandler(this.AboutForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -115,7 +116,7 @@
         #endregion
 
         private System.Windows.Forms.Button OkButton;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label TitleLabel;
         private System.Windows.Forms.Label DescriptionLabel;
         private System.Windows.Forms.Label CopyrightLabel;
         private System.Windows.Forms.Label Pbkdf2Label;

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
 
-namespace Crypto.NET.Encryption
+namespace LibCrypto.NET.Encryption
 {
     public static class Encryptor
     {
